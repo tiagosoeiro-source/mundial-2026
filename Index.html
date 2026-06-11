@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Mundial 2026">
+    <title>Mundial 2026 - Calendário e Resultados</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #ffffff;
+            --secondary: #f8f9fa;
+            --accent: #e94560;
+            --accent-light: #ff6b9d;
+            --success: #00b4d8;
+            --text: #1a1a1a;
+            --text-secondary: #666666;
+            --border: #ddd;
+            --bg: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: 1.5rem;
+            border-bottom: 3px solid var(--accent);
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .header-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        /* Filtros */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.75rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        select, input {
+            background: #ffffff;
+            border: 2px solid #ddd;
+            color: var(--text);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        select:hover, input:hover {
+            border-color: var(--accent);
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.15);
+        }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        button:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(233, 69, 96, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            border-color: var(--accent);
+        }
+
+        /* Estatísticas */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--accent);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        /* Jogos Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .game-card {
+            background: #ffffff;
+            border: 2px solid #ddd;
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .game-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 12px 24px rgba(233, 69, 96, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .game-card.has-result {
+            border-left: 5px solid var(--success);
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .game-group {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .game-phase {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .game-teams {
+            margin-bottom: 1.2rem;
+        }
+
+        .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .team-row:last-child {
+            border-bottom: none;
+        }
+
+        .team-name {
+            font-weight: 700;
+            flex: 1;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .score {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--accent);
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .score-empty {
+            color: #aaa;
+            font-size: 1.2rem;
+        }
+
+        /* Detalhe - Canal, Dia, Hora */
+        .game-details {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+        }
+
+        .detail-item {
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .game-channel-box {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            color: white;
+            padding: 0.5rem;
+            border-radius: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .game-footer {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .btn-small {
+            flex: 1;
+            padding: 0.6rem;
+            font-size: 0.85rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            border: 2px solid #ddd;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            margin-bottom: 2rem;
+        }
+
+        .modal-header h2 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .modal-teams {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 0.75rem;
+        }
+
+        .modal-team {
+            text-align: center;
+        }
+
+        .modal-team-name {
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        .modal-vs {
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .modal-actions button {
+            flex: 1;
+        }
+
+        .modal-actions .btn-secondary {
+            background: #f8f9fa;
+            color: var(--text);
+        }
+
+        .btn-delete {
+            background: #d63031;
+        }
+
+        .btn-delete:hover {
+            background: #e17055;
+        }
+
+        /* Vazio */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .filters {
+                justify-content: center;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Safe area para notch do iPhone */
+        @supports (padding: max(0px)) {
+            header {
+                padding-top: max(1.5rem, env(safe-area-inset-top));
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+            }
+
+            body {
+                padding-bottom: max(0, env(safe-area-inset-bottom));
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>🏆 Mundial 2026</h1>
+                    <span class="header-subtitle">Calendário e Resultados</span>
+                </div>
+                <button class="btn-secondary" onclick="exportData()">📥 Exportar</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Filtros -->
+        <div class="filters">
+            <div class="filter-group">
+                <label class="filter-label">Fase:</label>
+                <select id="phaseFilter" onchange="filterGames()">
+                    <option value="">Todas</option>
+                    <option value="Grupos">Fase de Grupos</option>
+                    <option value="16-avos">16-avos de Final</option>
+                    <option value="Oitavos">Oitavos de Final</option>
+                    <option value="Quartos">Quartos de Final</option>
+                    <option value="Meias">Meias-finais</option>
+                    <option value="Final">Final</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Grupo:</label>
+                <select id="groupFilter" onchange="filterGames()">
+                    <option value="">Todos</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                    <option value="I">I</option>
+                    <option value="J">J</option>
+                    <option value="K">K</option>
+                    <option value="L">L</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Equipa:</label>
+                <input type="text" id="teamFilter" placeholder="ex: Portugal" onchange="filterGames()" onkeyup="filterGames()">
+            </div>
+
+            <button onclick="resetFilters()">Limpar Filtros</button>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalGames">0</div>
+                <div class="stat-label">Jogos no Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="resultadosRegistados">0</div>
+                <div class="stat-label">Resultados Registados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="porCent">0%</div>
+                <div class="stat-label">Preenchimento</div>
+            </div>
+        </div>
+
+        <!-- Jogos -->
+        <div id="gamesList" class="games-grid"></div>
+    </main>
+
+    <!-- Modal -->
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Registar Resultado</h2>
+            </div>
+
+            <div class="modal-teams">
+                <div class="modal-team">
+                    <div class="modal-team-name" id="team1Modal"></div>
+                </div>
+                <div class="modal-vs">VS</div>
+                <div class="modal-team">
+                    <div class="modal-team-name" id="team2Modal"></div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="score1">Golos <span id="team1NameLabel"></span></label>
+                <input type="number" id="score1" min="0" max="99" placeholder="0">
+            </div>
+
+            <div class="input-group">
+                <label for="score2">Golos <span id="team2NameLabel"></span></label>
+                <input type="number" id="score2" min="0" max="99" placeholder="0">
+            </div>
+
+            <div class="modal-actions">
+                <button onclick="closeModal()" class="btn-secondary">Cancelar</button>
+                <button onclick="deleteResult()" class="btn-delete">Apagar</button>
+                <button onclick="saveResult()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos jogos - Fase de Grupos
+        const games = [
+            // Grupo A
+            { id: 1, team1: "México", team2: "África do Sul", date: "2026-06-11", time: "20:00", group: "A", city: "Cidade do México", phase: "Grupos", channel: "TVI/LV/SPTV" },
+            { id: 2, team1: "Coreia do Sul", team2: "Rep. Checa", date: "2026-06-12", time: "03:00", group: "A", city: "Guadalajara", phase: "Grupos", channel: "SPTV" },
+            { id: 3, team1: "Brasil", team2: "Marrocos", date: "2026-06-13", time: "23:00", group: "C", city: "Nova Iorque", phase: "Grupos", channel: "LV/SPTV" },
+            { id: 4, team1: "Haiti", team2: "Escócia", date: "2026-06-14", time: "02:00", group: "C", city: "Boston", phase: "Grupos", channel: "SPTV" },
+            { id: 5, team1: "Austrália", team2: "Turquia", date: "2026-06-14", time: "17:00", group: "D", city: "Vancôver", phase: "Grupos", channel: "SPTV" },
+            { id: 6, team1: "Alemanha", team2: "Curaçau", date: "2026-06-14", time: "18:00", group: "E", city: "Houston", phase: "Grupos", channel: "LV/SPTV" },
+            { id: 7, team1: "Países Baixos", team2: "Japão", date: "2026-06-14", time: "21:00", group: "F", city: "Dallas", phase: "Grupos", channel: "SPTV" },
+
+            // Grupo B
+            { id: 8, team1: "Canadá", team2: "Bósnia-Herz.", date: "2026-06-12", time: "20:00", group: "B", city: "Toronto", phase: "Grupos", channel: "SIC/LV/SPTV" },
+            { id: 9, team1: "Qatar", team2: "Suíça", date: "2026-06-13", time: "20:00", group: "B", city: "São Francisco", phase: "Grupos", channel: "SPTV" },
+            { id: 10, team1: "Suíça", team2: "Bósnia-Herz.", date: "2026-06-18", time: "20:00", group: "B", city: "Los Angeles", phase: "Grupos", channel: "RTP1/LV/SPTV" },
+            { id: 11, team1: "Canadá", team2: "Qatar", date: "2026-06-18", time: "23:00", group: "B", city: "São Francisco", phase: "Grupos", channel: "SPTV" },
+            { id: 12, team1: "México", team2: "Coreia do Sul", date: "2026-06-19", time: "02:00", group: "A", city: "Guadalajara", phase: "Grupos", channel: "SPTV" },
+            { id: 13, team1: "Rep. Checa", team2: "África do S.", date: "2026-06-18", time: "17:00", group: "A", city: "Atlanta", phase: "Grupos", channel: "SPTV" },
+            { id: 14, team1: "EUA", team2: "Paraguai", date: "2026-06-13", time: "02:00", group: "D", city: "Los Angeles", phase: "Grupos", channel: "SPTV" },
+
+            // Grupo C
+            { id: 15, team1: "Escócia", team2: "Marrocos", date: "2026-06-19", time: "23:00", group: "C", city: "Boston", phase: "Grupos", channel: "SPTV" },
+            { id: 16, team1: "Brasil", team2: "Haiti", date: "2026-06-20", time: "01:30", group: "C", city: "Filadélfia", phase: "Grupos", channel: "LV/SPTV" },
+            { id: 17, team1: "Escócia", team2: "Brasil", date: "2026-06-24", time: "23:00", group: "C", city: "Miami", phase: "Grupos", channel: "LV/SPTV" },
+            { id: 18, team1: "Marrocos", team2: "Haiti", date: "2026-06-24", time: "23:00", group: "C", city: "Atlanta", phase: "Grupos", channel: "SPTV" },
+
+            // Grupo D
+            { id: 19, team1: "Turquia", team2: "Paraguai", date: "2026-06-20", time: "04:00", group: "D", city: "São Francisco", phase: "Grupos", channel: "SPTV" },
+            { id: 20, team1: "EUA", team2: "Austrália", date: "2026-06-19", time: "20:00", group: "D", city: "Seattle", phase: "Grupos", channel: "SPTV" },
+            { id: 21, team1: "Turquia", team2: "EUA", date: "2026-06-26", time: "03:00", group: "D", city: "Los Angeles", phase: "Grupos", channel: "SPTV" },
+            { id: 22, team1: "Paraguai", team2: "Austrália", date: "2026-06-26", time: "03:00", group: "D", city: "São Francisco", phase: "Grupos", channel: "SPTV" },
+
+            // Grupo E
+            { id: 23, team1: "C. do Marfim", team2: "Equador", date: "2026-06-15", time: "00:00", group: "E", city: "Filadélfia", phase: "Grupos", channel: "SPTV" },
+            { id: 24, team1: "Equador", team2: "Curaçau", date: "2026-06-21", time: "01:00", group: "E", city: "Kansas City", phase: "Grupos", channel: "SPTV" },
+            { id: 25, team1: "Curaçau", team2: "C. do Marfim", date: "2026-06-25", time: "21:00", group: "E", city: "Filadélfia", phase: "Grupos", channel: "SPTV" },
+            { id: 26, team1: "Equador", team2: "Alemanha", date: "2026-06-25", time: "21:00", group: "E", city: "Nova Iorque", phase: "Grupos", channel: "SIC/LV/SPTV" },
+
+            // Grupo F
+            { id: 27, team1: "Suécia", team2: "Tunísia", date: "2026-06-15", time: "03:00", group: "F", city: "Monterrey", phase: "Grupos", channel: "SPTV" },
+            { id: 28, team1: "Países Baixos", team2: "Suécia", date: "2026-06-20", time: "18:00", group: "F", city: "Houston", phase: "Grupos", channel: "SPTV" },
+            { id: 29, team1: "Japão", team2: "Suécia", date: "2026-06-26", time: "00:00", group: "F", city: "Dallas", phase: "Grupos", channel: "SPTV" },
+            { id: 30, team1: "Tunísia", team2: "Países Baixos", date: "2026-06-26", time: "00:00", group: "F", city: "Kansas City", phase: "Grupos", channel: "SPTV" },
+
+            // Grupo G
+            { id: 31, team1: "Bélgica", team2: "Egipto", date: "2026-06-15", time: "20:00", group: "G", city: "Seattle", phase: "Grupos", channel: "SPTV" },
+            { id: 32, team1: "Irão", team2: "Nova Zelândia", date: "2026-06-16", time: "02:00", group: "G", city: "Los Angeles", phase: "Grupos", channel: "SPTV" },
+            { id: 33, team1: "Bélgica", team2: "Irão", date: "2026-06-21", time: "20:00", group: "G", city: "Los Angeles", phase: "Grupos", channel: "SPTV" },
+            { id: 34, team1: "Nova Zelândia", team2: "Egipto", date: "2026-06-22", time: "02:00", group: "G", city: "Vancôver", phase: "Grupos", channel: "SPTV" },
+
+            // Grupo H
+            { id: 35, team1: "Espanha", team2: "Cabo Verde", date: "2026-06-15", time: "17:00", group: "H", city: "Atlanta", phase: "Grupos", channel: "LV/SPTV" },
+            { id: 36, team1: "A. Saudita", team2: "Uruguai", date: "2026-06-15", time: "23:00", group: "H", city: "Miami", phase: "Grupos", channel: "SPTV" },
+            { id: 37, team1: "Espanha", team2: "A. Saudita", date: "2026-06-21", time: "17:00", group: "H", city: "Atlanta", phase: "Grupos", channel: "SPTV" },
+            { id: 38, team1: "Uruguai", team2: "Cabo Verde", date: "2026-06-21", time: "23:00", group: "H", city: "Miami", phase: "Grupos", channel: "SPTV" },
+
+            // Grupo I
+            { id: 39, team1: "França", team2: "Senegal", date: "2026-06-16", time: "20:00", group: "I", city: "Nova Iorque", phase: "Grupos", channel: "RTP1/LV/SPTV" },
+            { id: 40, team1: "Iraque", team2: "Noruega", date: "2026-06-16", time: "23:00", group: "I", city: "Boston", phase: "Grupos", channel: "SPTV" },
+            { id: 41, team1: "Noruega", team2: "França", date: "2026-06-26", time: "20:00", group: "I", city: "Boston", phase: "Grupos", channel: "TVI/SPTV" },
+            { id: 42, team1: "Senegal", team2: "Iraque", date: "2026-06-26", time: "20:00", group: "I", city: "Toronto", phase: "Grupos", channel: "SPTV" },
+
+            // Grupo J
+            { id: 43, team1: "Argentina", team2: "Argélia", date: "2026-06-17", time: "02:00", group: "J", city: "Kansas City", phase: "Grupos", channel: "SPTV" },
+            { id: 44, team1: "Áustria", team2: "Jordânia", date: "2026-06-17", time: "05:00", group: "J", city: "São Francisco", phase: "Grupos", channel: "SPTV" },
+            { id: 45, team1: "Argentina", team2: "Áustria", date: "2026-06-22", time: "18:00", group: "J", city: "Dallas", phase: "Grupos", channel: "LV/SPTV" },
+            { id: 46, team1: "Jordânia", team2: "Argélia", date: "2026-06-23", time: "04:00", group: "J", city: "São Francisco", phase: "Grupos", channel: "SPTV" },
+
+            // Grupo K - PORTUGAL
+            { id: 47, team1: "Portugal", team2: "RD Congo", date: "2026-06-17", time: "18:00", group: "K", city: "Houston", phase: "Grupos", channel: "SIC/LV/SPTV" },
+            { id: 48, team1: "Uzbequistão", team2: "Colômbia", date: "2026-06-18", time: "03:00", group: "K", city: "Cidade do México", phase: "Grupos", channel: "SPTV" },
+            { id: 49, team1: "Portugal", team2: "Uzbequistão", date: "2026-06-23", time: "18:00", group: "K", city: "Houston", phase: "Grupos", channel: "TVI/LV/SPTV" },
+            { id: 50, team1: "Colômbia", team2: "Portugal", date: "2026-06-28", time: "00:30", group: "K", city: "Miami", phase: "Grupos", channel: "RTP1/LV/SPTV" },
+
+            // Grupo L
+            { id: 51, team1: "Inglaterra", team2: "Croácia", date: "2026-06-17", time: "21:00", group: "L", city: "Dallas", phase: "Grupos", channel: "SPTV" },
+            { id: 52, team1: "Gana", team2: "Panamá", date: "2026-06-18", time: "00:00", group: "L", city: "Toronto", phase: "Grupos", channel: "SPTV" },
+            { id: 53, team1: "Inglaterra", team2: "Gana", date: "2026-06-23", time: "21:00", group: "L", city: "Boston", phase: "Grupos", channel: "SPTV" },
+            { id: 54, team1: "Panamá", team2: "Croácia", date: "2026-06-24", time: "00:00", group: "L", city: "Toronto", phase: "Grupos", channel: "SPTV" },
+        ];
+
+        let currentEditingGameId = null;
+        let results = JSON.parse(localStorage.getItem('mundial2026Results')) || {};
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            const options = { weekday: 'short', day: 'numeric', month: 'short' };
+            return date.toLocaleDateString('pt-PT', options);
+        }
+
+        function renderGames(gamesToShow = games) {
+            const listEl = document.getElementById('gamesList');
+            
+            if (gamesToShow.length === 0) {
+                listEl.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">
+                    <div class="empty-state-icon">⚽</div>
+                    <h3>Nenhum jogo encontrado</h3>
+                    <p>Tenta ajustar os filtros</p>
+                </div>`;
+                return;
+            }
+
+            listEl.innerHTML = gamesToShow.map(game => {
+                const result = results[game.id];
+                const hasResult = result !== undefined;
+                const resultClass = hasResult ? 'has-result' : '';
+                const dayName = formatDate(game.date);
+
+                return `
+                    <div class="game-card ${resultClass}" onclick="openResultModal(${game.id})">
+                        <div class="game-header">
+                            <span class="game-group">Grupo ${game.group}</span>
+                            <span class="game-phase">${game.phase}</span>
+                        </div>
+                        <div class="game-teams">
+                            <div class="team-row">
+                                <span class="team-name">${game.team1}</span>
+                                <span class="score ${!hasResult ? 'score-empty' : ''}">${hasResult ? result.score1 : '—'}</span>
+                            </div>
+                            <div class="team-row">
+                                <span class="team-name">${game.team2}</span>
+                                <span class="score ${!hasResult ? 'score-empty' : ''}">${hasResult ? result.score2 : '—'}</span>
+                            </div>
+                        </div>
+
+                        <div class="game-details">
+                            <div class="detail-item game-channel-box">
+                                ${game.channel}
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Dia</div>
+                                <div class="detail-value">${dayName}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Hora</div>
+                                <div class="detail-value">${game.time}</div>
+                            </div>
+                        </div>
+
+                        <div class="game-footer">
+                            <button class="btn-small" onclick="event.stopPropagation(); openResultModal(${game.id})">
+                                ${hasResult ? '✏️ Editar' : '📝 Registar'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updateStats();
+        }
+
+        function filterGames() {
+            const phase = document.getElementById('phaseFilter').value;
+            const group = document.getElementById('groupFilter').value;
+            const team = document.getElementById('teamFilter').value.toLowerCase();
+
+            const filtered = games.filter(game => {
+                const phaseMatch = !phase || game.phase === phase;
+                const groupMatch = !group || game.group === group;
+                const teamMatch = !team || game.team1.toLowerCase().includes(team) || game.team2.toLowerCase().includes(team);
+                return phaseMatch && groupMatch && teamMatch;
+            });
+
+            renderGames(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('phaseFilter').value = '';
+            document.getElementById('groupFilter').value = '';
+            document.getElementById('teamFilter').value = '';
+            renderGames();
+        }
+
+        function openResultModal(gameId) {
+            currentEditingGameId = gameId;
+            const game = games.find(g => g.id === gameId);
+            const result = results[gameId];
+
+            document.getElementById('team1Modal').textContent = game.team1;
+            document.getElementById('team2Modal').textContent = game.team2;
+            document.getElementById('team1NameLabel').textContent = `de ${game.team1}`;
+            document.getElementById('team2NameLabel').textContent = `de ${game.team2}`;
+
+            document.getElementById('score1').value = result ? result.score1 : '';
+            document.getElementById('score2').value = result ? result.score2 : '';
+
+            document.getElementById('resultModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').classList.remove('active');
+            currentEditingGameId = null;
+        }
+
+        function saveResult() {
+            const score1 = parseInt(document.getElementById('score1').value);
+            const score2 = parseInt(document.getElementById('score2').value);
+
+            if (isNaN(score1) || isNaN(score2)) {
+                alert('Por favor preenche ambos os resultados');
+                return;
+            }
+
+            results[currentEditingGameId] = { score1, score2 };
+            localStorage.setItem('mundial2026Results', JSON.stringify(results));
+            closeModal();
+            renderGames();
+        }
+
+        function deleteResult() {
+            if (confirm('Tens a certeza que queres apagar este resultado?')) {
+                delete results[currentEditingGameId];
+                localStorage.setItem('mundial2026Results', JSON.stringify(results));
+                closeModal();
+                renderGames();
+            }
+        }
+
+        function updateStats() {
+            const total = games.length;
+            const recorded = Object.keys(results).length;
+            const percentage = Math.round((recorded / total) * 100);
+
+            document.getElementById('totalGames').textContent = total;
+            document.getElementById('resultadosRegistados').textContent = recorded;
+            document.getElementById('porCent').textContent = percentage + '%';
+        }
+
+        function exportData() {
+            const exportObj = {
+                exportDate: new Date().toLocaleDateString('pt-PT'),
+                totalGames: games.length,
+                results: results,
+                games: games
+            };
+
+            const dataStr = JSON.stringify(exportObj, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `mundial-2026-resultados-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        // Fechar modal ao clicar fora
+        document.getElementById('resultModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Inicializar
+        renderGames();
+    </script>
+</body>
+</html>
